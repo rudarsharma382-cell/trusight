@@ -6,11 +6,7 @@ import 'core/theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    const ProviderScope(
-      child: AiMediaDetectorApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: AiMediaDetectorApp()));
 }
 
 class AiMediaDetectorApp extends StatelessWidget {

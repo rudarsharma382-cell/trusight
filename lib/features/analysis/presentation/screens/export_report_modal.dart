@@ -15,7 +15,12 @@ class ExportReportModal extends StatelessWidget {
     final jsonReport = const JsonEncoder.withIndent('  ').convert(result.toJson());
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: MediaQuery.of(context).padding.bottom + 95,
+      ),
       decoration: const BoxDecoration(
         color: AppTheme.darkCardBackground,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -27,19 +32,25 @@ class ExportReportModal extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.security_rounded, color: AppTheme.cyanAccent),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Forensic Audit Report',
-                    style: GoogleFonts.outfit(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.textPrimary,
+              Expanded(
+                child: Row(
+                  children: [
+                    const Icon(Icons.security_rounded, color: AppTheme.cyanAccent),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Forensic Audit Report',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               IconButton(
                 icon: const Icon(Icons.close_rounded, color: AppTheme.textMuted),
@@ -47,9 +58,11 @@ class ExportReportModal extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
             'Scan Identifier: ${result.id} | Timestamp: ${result.timestamp.toIso8601String()}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.jetBrainsMono(
               fontSize: 11,
               color: AppTheme.textSecondary,

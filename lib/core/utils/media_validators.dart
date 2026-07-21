@@ -5,19 +5,33 @@ enum MediaTypeCategory { image, video, audio }
 class MediaValidators {
   static const int maxFileSizeBytes = 100 * 1024 * 1024; // 100MB limit
 
-  static const List<String> supportedImageExtensions = ['jpg', 'jpeg', 'png', 'webp', 'bmp'];
+  static const List<String> supportedImageExtensions = ['jpg', 'jpeg', 'png', 'webp', 'bmp', 'tmp'];
   static const List<String> supportedVideoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'webm'];
   static const List<String> supportedAudioExtensions = ['mp3', 'wav', 'aac', 'm4a', 'flac', 'ogg'];
 
   static String getExtension(String path) {
+    if (!path.contains('.')) return '';
     return path.split('.').last.toLowerCase();
   }
 
   static MediaTypeCategory? detectCategory(String path) {
+    final lowerPath = path.toLowerCase();
     final ext = getExtension(path);
+
     if (supportedImageExtensions.contains(ext)) return MediaTypeCategory.image;
     if (supportedVideoExtensions.contains(ext)) return MediaTypeCategory.video;
     if (supportedAudioExtensions.contains(ext)) return MediaTypeCategory.audio;
+
+    // Fallback detection for raw camera cache streams & temporary picker files
+    if (lowerPath.contains('camera') ||
+        lowerPath.contains('image_picker') ||
+        lowerPath.contains('scaled_') ||
+        lowerPath.contains('picker') ||
+        ext == 'tmp' ||
+        ext == '') {
+      return MediaTypeCategory.image;
+    }
+
     return null;
   }
 

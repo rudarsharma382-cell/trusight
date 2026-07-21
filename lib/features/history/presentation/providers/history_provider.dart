@@ -35,8 +35,13 @@ class HistoryNotifier extends StateNotifier<HistoryState> {
   final HistoryRepository _repository;
 
   HistoryNotifier({HistoryRepository? repository})
-    : _repository = repository ?? HistoryRepository(),
-      super(const HistoryState()) {
+      : _repository = repository ?? HistoryRepository(),
+        super(const HistoryState()) {
+    _init();
+  }
+
+  Future<void> _init() async {
+    await _repository.loadHistory();
     _refresh();
   }
 
@@ -48,8 +53,8 @@ class HistoryNotifier extends StateNotifier<HistoryState> {
     state = state.copyWith(items: filtered);
   }
 
-  void addScan(AnalysisResult result) {
-    _repository.addScan(result);
+  Future<void> addScan(AnalysisResult result) async {
+    await _repository.addScan(result);
     _refresh();
   }
 
@@ -66,8 +71,8 @@ class HistoryNotifier extends StateNotifier<HistoryState> {
     _refresh();
   }
 
-  void clearHistory() {
-    _repository.clearHistory();
+  Future<void> clearHistory() async {
+    await _repository.clearHistory();
     _refresh();
   }
 }

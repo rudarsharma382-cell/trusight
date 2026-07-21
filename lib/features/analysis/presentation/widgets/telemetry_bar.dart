@@ -24,13 +24,17 @@ class TelemetryBar extends StatelessWidget {
             children: [
               const Icon(Icons.analytics_outlined, color: AppTheme.cyanAccent, size: 20),
               const SizedBox(width: 8),
-              Text(
-                'FORENSIC TELEMETRY BREAKDOWN',
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.cyanAccent,
-                  letterSpacing: 1.0,
+              Expanded(
+                child: Text(
+                  'FORENSIC TELEMETRY BREAKDOWN',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.cyanAccent,
+                    letterSpacing: 1.0,
+                  ),
                 ),
               ),
             ],
@@ -61,14 +65,19 @@ class TelemetryBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: GoogleFonts.inter(
-                fontSize: 13,
-                color: AppTheme.textSecondary,
-                fontWeight: FontWeight.w500,
+            Expanded(
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: AppTheme.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
+            const SizedBox(width: 8),
             Text(
               '$pct%',
               style: GoogleFonts.jetBrainsMono(

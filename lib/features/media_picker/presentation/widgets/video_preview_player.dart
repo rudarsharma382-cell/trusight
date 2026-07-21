@@ -122,37 +122,49 @@ class _VideoPreviewPlayerState extends State<VideoPreviewPlayer> {
               ),
             ),
           ),
-          // Bottom Info Bar
+          // Bottom Info Bar with Truncation Protection
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: Colors.black.withValues(alpha: 0.7),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              color: Colors.black.withValues(alpha: 0.75),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    MediaValidators.formatDuration(_controller.value.duration),
-                    style: GoogleFonts.jetBrainsMono(
-                      color: AppTheme.textPrimary,
-                      fontSize: 12,
+                  Flexible(
+                    child: Text(
+                      MediaValidators.formatDuration(_controller.value.duration),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.jetBrainsMono(
+                        color: AppTheme.textPrimary,
+                        fontSize: 10,
+                      ),
                     ),
                   ),
-                  Row(
-                    children: [
-                      const Icon(Icons.compress_rounded, color: AppTheme.emeraldSafe, size: 14),
-                      const SizedBox(width: 4),
-                      Text(
-                        'AUTO-OPTIMIZE ENABLED',
-                        style: GoogleFonts.jetBrainsMono(
-                          color: AppTheme.emeraldSafe,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.compress_rounded, color: AppTheme.emeraldSafe, size: 13),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            'AUTO-OPTIMIZE ENABLED',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.jetBrainsMono(
+                              color: AppTheme.emeraldSafe,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

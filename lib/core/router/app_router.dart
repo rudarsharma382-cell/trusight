@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../features/analysis/presentation/screens/analysis_hud_screen.dart';
 import '../../features/history/presentation/screens/history_screen.dart';
 import '../../features/media_picker/presentation/screens/media_picker_screen.dart';
+import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../theme/app_theme.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -145,8 +146,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/',
+  initialLocation: '/splash',
   routes: [
+    GoRoute(
+      path: '/splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
     ShellRoute(
       builder: (context, state, child) {
         return MainNavigationShell(child: child);

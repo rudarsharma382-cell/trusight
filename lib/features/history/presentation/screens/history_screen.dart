@@ -210,12 +210,40 @@ class HistoryScreen extends ConsumerWidget {
                                   color: Colors.white,
                                 ),
                               ),
-                              const SizedBox(height: 6),
-                              Text(
-                                'Scan an image, video, or audio file to log records.',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.inter(fontSize: 14, color: Colors.white54),
+                              const SizedBox(height: 10),
+
+                              // High-Tech Styled Subtitle Glass Section Box
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF131A26).withValues(alpha: 0.8),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: AppTheme.electricCyan.withValues(alpha: 0.25),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.info_outline_rounded, color: AppTheme.electricCyan, size: 16),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: Text(
+                                        'Scan an image, video, or audio file to log records',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppTheme.textSecondary,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+
+                              const SizedBox(height: 24),
+                              _buildPoweredByFooter(),
                             ],
                           ),
                         ),
@@ -295,6 +323,7 @@ class HistoryScreen extends ConsumerWidget {
         onTap: () {
           showModalBottomSheet(
             context: context,
+            useRootNavigator: true,
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             builder: (_) => Container(
@@ -414,6 +443,52 @@ class HistoryScreen extends ConsumerWidget {
               fontSize: 13,
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPoweredByFooter() {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF131A26).withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppTheme.electricCyan.withValues(alpha: 0.25),
+            width: 0.8,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 6,
+              height: 6,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.electricCyan,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.electricCyan,
+                    blurRadius: 6,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Powered by Rudar Sharma',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.electricCyan,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -27,64 +27,97 @@ class AnalysisHUDScreen extends ConsumerWidget {
             gradient: AppTheme.backgroundGradient,
           ),
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Styled Glowing Container with TruSight Logo Asset
-                Container(
-                  padding: const EdgeInsets.all(22),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF141C2B).withValues(alpha: 0.9),
-                    border: Border.all(
-                      color: AppTheme.electricCyan.withValues(alpha: 0.4),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.electricCyan.withValues(alpha: 0.25),
-                        blurRadius: 20,
-                        spreadRadius: 2,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Styled Glowing Container with TruSight Logo Asset
+                  Container(
+                    padding: const EdgeInsets.all(22),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFF141C2B).withValues(alpha: 0.9),
+                      border: Border.all(
+                        color: AppTheme.electricCyan.withValues(alpha: 0.4),
+                        width: 1.5,
                       ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.visibility_outlined,
-                    size: 48,
-                    color: AppTheme.electricCyan,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'No Recent Scans',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Select an image, video, or audio clip to perform a scan.',
-                  style: GoogleFonts.inter(fontSize: 14, color: Colors.white54),
-                ),
-                const SizedBox(height: 24),
-                if (onScanAnother != null)
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.electricCyan,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.electricCyan.withValues(alpha: 0.25),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ],
                     ),
-                    onPressed: onScanAnother,
-                    icon: const Icon(Icons.arrow_back_rounded, size: 20),
-                    label: Text(
-                      'Go to Detector',
-                      style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+                    child: const Icon(
+                      Icons.visibility_outlined,
+                      size: 48,
+                      color: AppTheme.electricCyan,
                     ),
                   ),
-              ],
+                  const SizedBox(height: 20),
+                  Text(
+                    'No Recent Scans',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // High-Tech Styled Subtitle Glass Section Box
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF131A26).withValues(alpha: 0.8),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppTheme.electricCyan.withValues(alpha: 0.25),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.info_outline_rounded, color: AppTheme.electricCyan, size: 16),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            'Select an image, video, or audio clip to perform a scan',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                  if (onScanAnother != null)
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.electricCyan,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      onPressed: onScanAnother,
+                      icon: const Icon(Icons.arrow_back_rounded, size: 20),
+                      label: Text(
+                        'Go to Detector',
+                        style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+
+                  const SizedBox(height: 24),
+                  _buildPoweredByFooter(),
+                ],
+              ),
             ),
           ),
         ),
@@ -112,11 +145,15 @@ class AnalysisHUDScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 10),
-            Text(
-              'Forensic HUD (${result.id})',
-              style: GoogleFonts.plusJakartaSans(
-                fontWeight: FontWeight.w800,
-                fontSize: 17,
+            Expanded(
+              child: Text(
+                'Forensic HUD (${result.id})',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                ),
               ),
             ),
           ],
@@ -127,6 +164,7 @@ class AnalysisHUDScreen extends ConsumerWidget {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
+                useRootNavigator: true,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
                 builder: (_) => SizedBox(
@@ -216,7 +254,7 @@ class AnalysisHUDScreen extends ConsumerWidget {
                 TelemetryBar(result: result),
                 const SizedBox(height: 24),
 
-                // Detected Forensic Signals Section
+                // Detected Forensic Signals Section Header
                 Row(
                   children: [
                     Container(
@@ -228,13 +266,17 @@ class AnalysisHUDScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      'DETECTED FORENSIC ARTIFACTS (${result.artifacts.length})',
-                      style: GoogleFonts.jetBrainsMono(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.electricCyan,
-                        letterSpacing: 1.1,
+                    Expanded(
+                      child: Text(
+                        'DETECTED FORENSIC ARTIFACTS (${result.artifacts.length})',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.electricCyan,
+                          letterSpacing: 1.1,
+                        ),
                       ),
                     ),
                   ],
@@ -258,6 +300,7 @@ class AnalysisHUDScreen extends ConsumerWidget {
                         onPressed: () {
                           showModalBottomSheet(
                             context: context,
+                            useRootNavigator: true,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
                             builder: (_) => SizedBox(
@@ -297,10 +340,59 @@ class AnalysisHUDScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
+
+                const SizedBox(height: 16),
+                _buildPoweredByFooter(),
                 const SizedBox(height: 80),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPoweredByFooter() {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF131A26).withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppTheme.electricCyan.withValues(alpha: 0.25),
+            width: 0.8,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 6,
+              height: 6,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.electricCyan,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.electricCyan,
+                    blurRadius: 6,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Powered by Rudar Sharma',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.electricCyan,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -117,25 +117,47 @@ class MediaPickerScreen extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'AI Media Authenticator',
+                            'AI MEDIA FORENSICS DETECTOR',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: AppTheme.electricCyan,
-                              letterSpacing: 0.6,
+                              letterSpacing: 1.0,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 10),
+                    ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [
+                          AppTheme.electricCyan,
+                          Color(0xFFA855F7),
+                          AppTheme.neonIndigo,
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ).createShader(bounds),
+                      child: Text(
+                        'Verify Media Authenticity',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                          height: 1.25,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     Text(
-                      'Upload an image, video, or audio clip to scan for synthetic manipulation.',
+                      'Detect synthetic artifacts, deepfakes, and AI audio in seconds.',
                       style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: AppTheme.textSecondary,
+                        fontSize: 14,
+                        color: Colors.white70,
                         height: 1.45,
                       ),
                     ),
@@ -152,7 +174,15 @@ class MediaPickerScreen extends ConsumerWidget {
                     if (state.selectedFile == null)
                       MediaDropZone(
                         category: state.category,
-                        onFileSelected: (file) => notifier.setSelectedFile(file),
+                        onFileSelected: (file) async {
+                          notifier.setSelectedFile(file);
+                          await notifier.runAnalysis(file: file);
+                          final newState = ref.read(analysisProvider);
+                          if (newState.status == AnalysisStatus.success && newState.result != null) {
+                            ref.read(historyProvider.notifier).addScan(newState.result!);
+                            onNavigateToResults();
+                          }
+                        },
                       )
                     else
                       _buildMediaPreviewCard(context, ref, state.selectedFile!, state.category),
@@ -255,6 +285,10 @@ class MediaPickerScreen extends ConsumerWidget {
 
                     // Continuous Horizontal Engine Cards ("DETECTION ENGINES ACTIVE")
                     _buildHorizontalActiveEngineSection(),
+                    const SizedBox(height: 12),
+
+                    // Powered by Rudar Sharma Footer
+                    _buildPoweredByFooter(),
                     const SizedBox(height: 16),
                   ],
                 ),
@@ -263,6 +297,52 @@ class MediaPickerScreen extends ConsumerWidget {
 
             // Loading Progress HUD Overlay
             if (state.isLoading) ProgressHUD(state: state),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPoweredByFooter() {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF131A26).withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppTheme.electricCyan.withValues(alpha: 0.25),
+            width: 0.8,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 6,
+              height: 6,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.electricCyan,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.electricCyan,
+                    blurRadius: 6,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Powered by Rudar Sharma',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.electricCyan,
+                letterSpacing: 0.5,
+              ),
+            ),
           ],
         ),
       ),

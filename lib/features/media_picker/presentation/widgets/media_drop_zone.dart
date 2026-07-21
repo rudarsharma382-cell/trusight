@@ -44,6 +44,32 @@ class _MediaDropZoneState extends State<MediaDropZone> with SingleTickerProvider
     super.dispose();
   }
 
+  Future<void> _processPickedFile(XFile picked) async {
+    try {
+      final bytes = await picked.readAsBytes();
+      File targetFile;
+
+      final extension = picked.path.contains('.') ? picked.path.split('.').last.toLowerCase() : '';
+      if (picked.path.isNotEmpty && File(picked.path).existsSync() && extension != 'tmp' && extension.isNotEmpty) {
+        targetFile = File(picked.path);
+        if (await targetFile.length() == 0 && bytes.isNotEmpty) {
+          await targetFile.writeAsBytes(bytes);
+        }
+      } else {
+        final tempDir = await Directory.systemTemp.createTemp('trusight_camera');
+        final ext = widget.category == MediaTypeCategory.video ? 'mp4' : 'jpg';
+        targetFile = File('${tempDir.path}${Platform.pathSeparator}camera_capture_${DateTime.now().millisecondsSinceEpoch}.$ext');
+        await targetFile.writeAsBytes(bytes);
+      }
+
+      widget.onFileSelected(targetFile);
+    } catch (_) {
+      if (picked.path.isNotEmpty) {
+        widget.onFileSelected(File(picked.path));
+      }
+    }
+  }
+
   Future<void> _pickFromGallery(BuildContext context) async {
     final picker = ImagePicker();
     XFile? picked;
@@ -58,7 +84,7 @@ class _MediaDropZoneState extends State<MediaDropZone> with SingleTickerProvider
     }
 
     if (picked != null) {
-      widget.onFileSelected(File(picked.path));
+      await _processPickedFile(picked);
     }
   }
 
@@ -66,17 +92,27 @@ class _MediaDropZoneState extends State<MediaDropZone> with SingleTickerProvider
     final picker = ImagePicker();
     XFile? picked;
 
-    if (widget.category == MediaTypeCategory.image) {
-      picked = await picker.pickImage(source: ImageSource.camera);
-    } else if (widget.category == MediaTypeCategory.video) {
-      picked = await picker.pickVideo(source: ImageSource.camera);
-    } else {
-      await _pickFromFiles(context);
+    try {
+      if (widget.category == MediaTypeCategory.image) {
+        picked = await picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 95,
+        );
+      } else if (widget.category == MediaTypeCategory.video) {
+        picked = await picker.pickVideo(source: ImageSource.camera);
+      } else {
+        if (context.mounted) await _pickFromFiles(context);
+        return;
+      }
+    } catch (_) {
+      if (context.mounted) await _pickFromFiles(context);
       return;
     }
 
     if (picked != null) {
-      widget.onFileSelected(File(picked.path));
+      await _processPickedFile(picked);
+    } else {
+      if (context.mounted) await _pickFromFiles(context);
     }
   }
 

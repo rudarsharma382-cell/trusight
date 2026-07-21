@@ -59,35 +59,38 @@ class ConfidenceGauge extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: color.withValues(alpha: 0.4)),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                score < 0.35
-                    ? Icons.verified_user_rounded
-                    : score < 0.70
-                        ? Icons.warning_amber_rounded
-                        : Icons.gpp_bad_rounded,
-                color: color,
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                classification.toUpperCase(),
-                style: GoogleFonts.outfit(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  score < 0.35
+                      ? Icons.verified_user_rounded
+                      : score < 0.70
+                          ? Icons.warning_amber_rounded
+                          : Icons.gpp_bad_rounded,
                   color: color,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                  letterSpacing: 0.5,
+                  size: 16,
                 ),
-              ),
-            ],
+                const SizedBox(width: 6),
+                Text(
+                  classification.toUpperCase(),
+                  style: GoogleFonts.outfit(
+                    color: color,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
