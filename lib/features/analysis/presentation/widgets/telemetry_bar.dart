@@ -25,15 +25,18 @@ class TelemetryBar extends StatelessWidget {
               const Icon(Icons.analytics_outlined, color: AppTheme.cyanAccent, size: 20),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  'FORENSIC TELEMETRY BREAKDOWN',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.cyanAccent,
-                    letterSpacing: 1.0,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Forensic Elementary Breakdown',
+                    maxLines: 1,
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.cyanAccent,
+                      letterSpacing: 1.0,
+                    ),
                   ),
                 ),
               ),

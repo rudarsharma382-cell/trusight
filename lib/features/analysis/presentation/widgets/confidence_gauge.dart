@@ -17,8 +17,8 @@ class ConfidenceGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = AppTheme.getRiskColor(score);
-    final percentage = (score * 100).round();
+    final color = AppTheme.getRiskColor(score / 100.0);
+    final percentage = score.round();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -28,7 +28,7 @@ class ConfidenceGauge extends StatelessWidget {
           lineWidth: 16.0,
           animation: true,
           animationDuration: 1200,
-          percent: score.clamp(0.0, 1.0),
+          percent: (score / 100.0).clamp(0.0, 1.0),
           circularStrokeCap: CircularStrokeCap.round,
           backgroundColor: AppTheme.borderOverlay.withValues(alpha: 0.5),
           progressColor: color,

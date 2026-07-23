@@ -72,12 +72,12 @@ class AnalysisResult {
   });
 
   RiskLevel get riskLevel {
-    if (overallScore < 0.35) return RiskLevel.low;
-    if (overallScore < 0.70) return RiskLevel.moderate;
+    if (overallScore < 35.0) return RiskLevel.low;
+    if (overallScore < 70.0) return RiskLevel.moderate;
     return RiskLevel.severe;
   }
 
-  int get riskPercentage => (overallScore * 100).round();
+  int get riskPercentage => overallScore.round();
 
   Map<String, dynamic> toJson() => {
         'id': id,

@@ -9,6 +9,7 @@ class DioClient {
       BaseOptions(
         baseUrl: ApiEndpoints.baseUrl,
         connectTimeout: ApiEndpoints.connectTimeout,
+        sendTimeout: ApiEndpoints.sendTimeout,
         receiveTimeout: ApiEndpoints.receiveTimeout,
         headers: {
           'Accept': 'application/json',

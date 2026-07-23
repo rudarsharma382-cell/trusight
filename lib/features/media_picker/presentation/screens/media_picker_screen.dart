@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/media_validators.dart';
+import '../../../../core/network/connectivity_provider.dart';
 import '../../../analysis/presentation/providers/analysis_provider.dart';
 import '../../../analysis/presentation/widgets/progress_hud.dart';
 import '../../../history/presentation/providers/history_provider.dart';
@@ -22,6 +23,7 @@ class MediaPickerScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(analysisProvider);
     final notifier = ref.read(analysisProvider.notifier);
+    final isOffline = ref.watch(connectivityProvider);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -110,6 +112,7 @@ class MediaPickerScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    if (isOffline) _buildOfflineBanner(),
                     // Header Subtitle Section with Flexible Text Protection
                     Row(
                       children: [
@@ -176,6 +179,14 @@ class MediaPickerScreen extends ConsumerWidget {
                         category: state.category,
                         onFileSelected: (file) async {
                           notifier.setSelectedFile(file);
+                          if (isOffline) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Please connect to Wi-Fi or mobile data for real-time AI authentication."),
+                              ),
+                            );
+                            return;
+                          }
                           await notifier.runAnalysis(file: file);
                           final newState = ref.read(analysisProvider);
                           if (newState.status == AnalysisStatus.success && newState.result != null) {
@@ -238,6 +249,14 @@ class MediaPickerScreen extends ConsumerWidget {
                             onTap: state.isLoading
                                 ? null
                                 : () async {
+                                    if (isOffline) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Please connect to Wi-Fi or mobile data for real-time AI authentication."),
+                                        ),
+                                      );
+                                      return;
+                                    }
                                     await notifier.runAnalysis();
                                     final newState = ref.read(analysisProvider);
                                     if (newState.status == AnalysisStatus.success && newState.result != null) {
@@ -608,6 +627,72 @@ class MediaPickerScreen extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildOfflineBanner() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF3B2D00).withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFFFB700).withValues(alpha: 0.6),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFFB700).withValues(alpha: 0.1),
+            blurRadius: 12,
+            spreadRadius: -2,
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFB700).withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.wifi_off_rounded,
+              color: Color(0xFFFFB700),
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'No Internet Connection',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: const Color(0xFFFFB700),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Cloud AI analysis requires internet. Results may be limited or rely on local fallback history.',
+                  style: GoogleFonts.inter(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 12.5,
+                    height: 1.35,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

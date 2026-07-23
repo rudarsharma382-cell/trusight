@@ -26,6 +26,7 @@ dependencies:
   shared_preferences: ^2.5.2
   lottie: ^3.3.1
   flutter_native_splash: ^2.4.4
+  connectivity_plus: ^6.0.3
 
 dev_dependencies:
   flutter_test:
@@ -34,12 +35,13 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.1
 
 flutter_launcher_icons:
-  android: true
+  android: "launcher_icon"
   ios: true
   image_path: "assets/images/trusight_logo.png"
   min_sdk_android: 21
   adaptive_icon_background: "#080B10"
   adaptive_icon_foreground: "assets/images/trusight_logo.png"
+  adaptive_icon_foreground_inset: 16
 
 flutter_native_splash:
   color: "#080B10"

@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:developer' as developer;
 import 'package:dio/dio.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../../../core/network/api_endpoints.dart';
 import '../../../core/network/dio_client.dart';
@@ -30,7 +32,14 @@ class DetectionApiService {
       bytes = Uint8List(0);
     }
 
-    if (!forceMock) {
+    bool isOffline = false;
+    try {
+      final results = await Connectivity().checkConnectivity();
+      isOffline = results.isEmpty ||
+          (results.length == 1 && results.first == ConnectivityResult.none);
+    } catch (_) {}
+
+    if (!forceMock && !isOffline) {
       try {
         final formData = FormData.fromMap({
           'file': bytes.isNotEmpty
@@ -38,11 +47,13 @@ class DetectionApiService {
               : await MultipartFile.fromFile(file.path, filename: fileName),
         });
 
+        developer.log('Initiating scan. Outgoing URL: ${ApiEndpoints.baseUrl}${ApiEndpoints.detect}', name: 'DetectionApiService');
         final response = await _dioClient.dio.post(
           ApiEndpoints.detect,
           data: formData,
           onSendProgress: onProgress,
         );
+        developer.log('Scan response received. Status code: ${response.statusCode}', name: 'DetectionApiService');
 
         if (response.statusCode == 200 && response.data != null) {
           final data = response.data is Map<String, dynamic>
@@ -73,12 +84,13 @@ class DetectionApiService {
     int fileSize,
   ) {
     final double overallScore = (json['overallScore'] as num? ?? 0.0).toDouble();
+    final double normalizedScore = overallScore / 100.0;
     final String fileName = json['fileName'] as String? ?? fallbackFileName;
-    final String classification = json['classification'] as String? ?? _getClassificationText(overallScore);
+    final String classification = json['classification'] as String? ?? _getClassificationText(normalizedScore);
     final String requestId = json['requestId'] as String? ??
         'TRU-${DateTime.now().millisecondsSinceEpoch.toRadixString(36).toUpperCase()}';
 
-    final artifacts = _generateArtifacts(category, overallScore);
+    final artifacts = _generateArtifacts(category, normalizedScore);
 
     return AnalysisResult(
       id: requestId,
@@ -89,10 +101,10 @@ class DetectionApiService {
       classification: classification,
       artifacts: artifacts,
       timestamp: DateTime.now(),
-      spatialArtifactScore: (overallScore * 0.91 + 0.05).clamp(0.05, 0.98),
-      spectralNoiseScore: (overallScore * 0.88 + 0.08).clamp(0.05, 0.98),
-      metadataIntegrityScore: (1.0 - overallScore * 0.82).clamp(0.05, 0.95),
-      temporalJitterScore: (overallScore * 0.93 + 0.04).clamp(0.05, 0.98),
+      spatialArtifactScore: (normalizedScore * 0.91 + 0.05).clamp(0.05, 0.98),
+      spectralNoiseScore: (normalizedScore * 0.88 + 0.08).clamp(0.05, 0.98),
+      metadataIntegrityScore: (1.0 - normalizedScore * 0.82).clamp(0.05, 0.95),
+      temporalJitterScore: (normalizedScore * 0.93 + 0.04).clamp(0.05, 0.98),
     );
   }
 
@@ -116,10 +128,11 @@ class DetectionApiService {
     await Future.delayed(const Duration(milliseconds: 400));
 
     // Inspect file header bytes & filename
-    double score = _calculateDeterministicScore(bytes: bytes, fileName: fileName, category: category);
+    double rawScore = _calculateDeterministicScore(bytes: bytes, fileName: fileName, category: category);
+    double score = rawScore * 100.0;
 
-    final classification = _getClassificationText(score);
-    final artifacts = _generateArtifacts(category, score);
+    final classification = _getClassificationText(rawScore);
+    final artifacts = _generateArtifacts(category, rawScore);
 
     final String fileHash = bytes.isNotEmpty
         ? (bytes.length * 31 + bytes.first).toRadixString(16).toUpperCase()
@@ -134,10 +147,10 @@ class DetectionApiService {
       classification: classification,
       artifacts: artifacts,
       timestamp: DateTime.now(),
-      spatialArtifactScore: (score * 0.91 + 0.05).clamp(0.05, 0.98),
-      spectralNoiseScore: (score * 0.88 + 0.08).clamp(0.05, 0.98),
-      metadataIntegrityScore: (1.0 - score * 0.82).clamp(0.05, 0.95),
-      temporalJitterScore: (score * 0.93 + 0.04).clamp(0.05, 0.98),
+      spatialArtifactScore: (rawScore * 0.91 + 0.05).clamp(0.05, 0.98),
+      spectralNoiseScore: (rawScore * 0.88 + 0.08).clamp(0.05, 0.98),
+      metadataIntegrityScore: (1.0 - rawScore * 0.82).clamp(0.05, 0.95),
+      temporalJitterScore: (rawScore * 0.93 + 0.04).clamp(0.05, 0.98),
     );
   }
 
